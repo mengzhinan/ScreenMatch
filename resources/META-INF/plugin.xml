@@ -5,7 +5,7 @@
     <vendor email="136239173@qq.com" url="http://blog.csdn.net/fesdgasdgasdg?viewmode=contents">Author - duke</vendor>
 
     <description><![CDATA[
-      A app screen match tools for android mobile devices.
+      [Author - duke] A app screen match tools for android mobile devices.
       For example you can use on phone,pad,TV or other device of android system.
     ]]></description>
 
@@ -14,6 +14,10 @@
           <li>Support batch create dimens.xml files base on res/values/dimens.xml</li>
           <li>Please pay attention to .../ProjectRoot/screenMatch.properties configuration file</li>
           <li>Please pay attention to .../ProjectRoot/screenMatch_example_dimens.xml example file</li>
+        </ul>
+        <ul>
+          <li>Usage : <a href="http://blog.csdn.net/fesdgasdgasdg/article/details/78108169">http://blog.csdn.net/fesdgasdgasdg/article/details/78108169</a></li>
+          <li>Source code : <a href="https://github.com/mengzhinan/ScreenMatch">https://github.com/mengzhinan/ScreenMatch</a></li>
         </ul>
         Learn more about:
         <ul>
