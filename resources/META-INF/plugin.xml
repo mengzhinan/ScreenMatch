@@ -1,0 +1,49 @@
+<idea-plugin>
+    <id>com.duke.screenmatch</id>
+    <name>ScreenMatch</name>
+    <version>2.0</version>
+    <vendor email="136239173@qq.com" url="http://blog.csdn.net/fesdgasdgasdg?viewmode=contents">Author - duke</vendor>
+
+    <description><![CDATA[
+      A app screen match tools for android mobile devices.
+      For example you can use on phone,pad,TV or other device of android system.
+    ]]></description>
+
+    <change-notes><![CDATA[
+        <ul>
+          <li>Support batch create dimens.xml files base on res/values/dimens.xml</li>
+          <li>Please pay attention to .../ProjectRoot/screenMatch.properties configuration file</li>
+          <li>Please pay attention to .../ProjectRoot/screenMatch_example_dimens.xml example file</li>
+        </ul>
+        Learn more about:
+        <ul>
+          <li><a href="http://blog.csdn.net/fesdgasdgasdg/article/details/52325590">http://blog.csdn.net/fesdgasdgasdg/article/details/52325590</a></li>
+          <li><a href="http://download.csdn.net/download/fesdgasdgasdg/9913744">http://download.csdn.net/download/fesdgasdgasdg/9913744</a></li>
+          <li><a href="https://github.com/mengzhinan/PhoneScreenMatch">https://github.com/mengzhinan/PhoneScreenMatch</a></li>
+        </ul>
+    ]]>
+    </change-notes>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+    <!-- Default value is 145.0 -->
+    <idea-version since-build="107.121"/>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <!-- uncomment to enable plugin in all products
+    <depends>com.intellij.modules.lang</depends>
+    -->
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+        <action id="ScreenMatch.MainAction" class="com.duke.screenmatch.ui.MainAction" text="ScreenMatch"
+                description="ScreenMatch">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="CutCopyPasteGroup"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt M"/>
+        </action>
+    </actions>
+</idea-plugin>
