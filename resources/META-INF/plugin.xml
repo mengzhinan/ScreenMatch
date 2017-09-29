@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.duke.screenmatch</id>
     <name>ScreenMatch</name>
-    <version>2.0</version>
+    <version>2.1</version>
     <vendor email="136239173@qq.com" url="http://blog.csdn.net/fesdgasdgasdg?viewmode=contents">Author - duke</vendor>
 
     <description><![CDATA[

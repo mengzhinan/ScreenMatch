@@ -1,6 +1,6 @@
 package com.duke.screenmatch.ui;
 
-import com.duke.screenmatch.dp.MainDimenSax;
+import com.duke.screenmatch.dp.Main;
 import com.duke.screenmatch.listener.OnOkClickListener;
 import com.duke.screenmatch.settings.Settings;
 import com.duke.screenmatch.utils.Utils;
@@ -97,7 +97,7 @@ public class MainAction extends AnAction {
 
 
         try {
-            String resultMsg = MainDimenSax.start(matchFont, tempBaseDP, needMatchs, ignoreMatchs, resBasePath);
+            String resultMsg = Main.start(matchFont, tempBaseDP, needMatchs, ignoreMatchs, resBasePath);
             Messages.showMessageDialog(resultMsg, "Tip", Messages.getInformationIcon());
         } catch (Exception e) {
             Messages.showMessageDialog("Failure, There may be some errors in your screenMatch.properties file.", "Error", Messages.getErrorIcon());
