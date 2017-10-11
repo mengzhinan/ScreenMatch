@@ -22,18 +22,48 @@ import java.io.IOException;
 import java.util.*;
 
 public class Utils {
-    public static int DIALOG_WIDTH = 400;
-    public static int DIALOG_HEIGHT = 450;
     private static String[] ignoreFoldersDefault = {".gradle", "gradle", ".idea", "build", ".git"};
 
     //PropertiesComponent.getInstance().setValue() //保存基本类型及String等
     //PropertiesComponent.getInstance().setValues() //可保存数字
 
+    private static Dimension getDimension() {
+        return Toolkit.getDefaultToolkit().getScreenSize();
+    }
+
+    public static int getDialogWidth() {
+        Dimension dimension = getDimension();
+        if (dimension == null) {
+            return 400;
+        }
+        return dimension.width / 4;
+    }
+
+    public static int getDialogHeight() {
+        Dimension dimension = getDimension();
+        if (dimension == null) {
+            return 450;
+        }
+        return dimension.height / 2;
+    }
+
+    /**
+     * 设置对话框的位置(设置居中)
+     *
+     * @return
+     */
     public static Point getDialogCenterLocation() {
-        Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
-        Point point = new Point();
-        point.x = (dimension.width - DIALOG_WIDTH) >> 1;
-        point.y = (dimension.height - DIALOG_HEIGHT) >> 1;
+        Dimension dimension = getDimension();
+        Point point = new Point(0, 0);
+        if (dimension == null) {
+            return point;
+        }
+        /**
+         * dimension.width / 4 即对话框的宽度
+         * dimension.height / 3 i对话框的高度
+         */
+        point.x = (dimension.width - getDialogWidth()) >> 1;
+        point.y = (dimension.height - getDialogHeight()) >> 1;
         return point;
     }
 

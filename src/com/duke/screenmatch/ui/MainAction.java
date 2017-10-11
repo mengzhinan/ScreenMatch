@@ -43,7 +43,7 @@ public class MainAction extends AnAction {
         } else {
             SelectModuleDialog dialog = new SelectModuleDialog();
             dialog.setTitle("Select Module");
-            dialog.setSize(Utils.DIALOG_WIDTH, Utils.DIALOG_HEIGHT);
+            dialog.setSize(Utils.getDialogWidth(), Utils.getDialogHeight());
             Point point = Utils.getDialogCenterLocation();
             dialog.setLocation(point.x, point.y);
             dialog.setModuleNames(project, dialog);
