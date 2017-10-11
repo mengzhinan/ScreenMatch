@@ -6,7 +6,6 @@ import com.intellij.openapi.project.Project;
 
 import javax.swing.*;
 import java.awt.event.*;
-import java.util.ArrayList;
 
 public class SelectModuleDialog extends JDialog {
     private JPanel contentPane;
@@ -34,12 +33,12 @@ public class SelectModuleDialog extends JDialog {
         }
         DefaultListModel listModel = new DefaultListModel();
         JList jList = dialog.getJList();
-        ArrayList<String> arrayList = Utils.getModuleNames(Utils.getBasePath(project));
-        if (arrayList == null || arrayList.size() <= 0) {
+        String[] nameArr = Utils.getModuleNames(Utils.getBasePath(project));
+        if (nameArr == null || nameArr.length <= 0) {
             return;
         }
-        for (String anArrayList : arrayList) {
-            listModel.addElement(anArrayList);
+        for (String aNameArr : nameArr) {
+            listModel.addElement(aNameArr);
         }
         jList.setModel(listModel);
     }

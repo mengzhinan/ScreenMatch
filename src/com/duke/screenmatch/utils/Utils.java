@@ -44,7 +44,7 @@ public class Utils {
         return false;
     }
 
-    public static ArrayList<String> getModuleNames(String basePath) {
+    public static String[] getModuleNames(String basePath) {
         if (isEmpty(basePath)) {
             return null;
         }
@@ -79,7 +79,15 @@ public class Utils {
         if (!Utils.isEmpty(markUsuallyUsed)) {
             names.add(0, markUsuallyUsed);
         }
-        return names;
+        if (names.size() <= 0) {
+            return null;
+        }
+        String[] nameArr = new String[names.size()];
+        for (int i = 0; i < nameArr.length; i++) {
+            nameArr[i] = names.get(i);
+        }
+        Arrays.sort(nameArr);
+        return nameArr;
     }
 
     private static boolean isIgnore(String basePath, String targetValue) {
