@@ -98,7 +98,11 @@ public class MainAction extends AnAction {
         boolean isUseNewFolder = true;
         try {
             String createValuesSWFolder = Settings.get(basePath, Settings.KEY_CREATE_VALUES_SW_FOLDER);
-            isUseNewFolder = Boolean.parseBoolean(createValuesSWFolder);
+            if (createValuesSWFolder != null && createValuesSWFolder.trim().length() > 0) {
+                if (createValuesSWFolder.trim().equals("false")) {
+                    isUseNewFolder = false;
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
