@@ -95,9 +95,16 @@ public class MainAction extends AnAction {
             matchFont = false;
         }
 
+        boolean isUseNewFolder = true;
+        try {
+            String createValuesSWFolder = Settings.get(basePath, Settings.KEY_CREATE_VALUES_SW_FOLDER);
+            isUseNewFolder = Boolean.parseBoolean(createValuesSWFolder);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         try {
-            String resultMsg = Main.start(matchFont, tempBaseDP, needMatchs, ignoreMatchs, resBasePath);
+            String resultMsg = Main.start(matchFont, tempBaseDP, needMatchs, ignoreMatchs, resBasePath, isUseNewFolder);
             Messages.showMessageDialog(resultMsg, "Tip", Messages.getInformationIcon());
         } catch (Exception e) {
             Messages.showMessageDialog("Failure, There may be some errors in your screenMatch.properties file.", "Error", Messages.getErrorIcon());

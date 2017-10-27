@@ -26,7 +26,8 @@ public class Settings {
     public static String KEY_IGNORE_MODULE_NAME = "ignore_module_name";
     public static String KEY_NOT_SHOW_DIALOG = "not_show_dialog";
     public static String KEY_IS_MATCH_FONT_SP = "is_match_font_sp";
-    private static String KEY_NOT_CREATE_DEFAULT_DIMENS = "not_create_default_dimens";
+    public static String KEY_NOT_CREATE_DEFAULT_DIMENS = "not_create_default_dimens";
+    public static String KEY_CREATE_VALUES_SW_FOLDER = "create_values_sw_folder";
 
 
     public static String get(String basePath, String key) {
@@ -78,6 +79,7 @@ public class Settings {
                         && !KEY_IGNORE_MODULE_NAME.equals(key)
                         && !KEY_NOT_SHOW_DIALOG.equals(key)
                         && !KEY_IS_MATCH_FONT_SP.equals(key)
+                        && !KEY_CREATE_VALUES_SW_FOLDER.equals(key)
                         && !KEY_NOT_CREATE_DEFAULT_DIMENS.equals(key)) {
                     continue;
                 }
