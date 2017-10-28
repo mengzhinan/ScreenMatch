@@ -101,6 +101,8 @@ public class MainAction extends AnAction {
             if (createValuesSWFolder != null && createValuesSWFolder.trim().length() > 0) {
                 if (createValuesSWFolder.trim().equals("false")) {
                     isUseNewFolder = false;
+                } else {
+                    //其他任何情况，都会被认为是默认值true
                 }
             }
         } catch (Exception e) {
