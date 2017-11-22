@@ -74,7 +74,7 @@ public class Tools {
             return sourceValue;
         }
         //数据格式化对象
-        DecimalFormat df = new DecimalFormat("0.000");
+        DecimalFormat df = new DecimalFormat("0.0000");
         return df.format(temp) + endValue;
     }
 
