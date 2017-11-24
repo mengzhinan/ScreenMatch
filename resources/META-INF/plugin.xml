@@ -1,15 +1,21 @@
 <idea-plugin>
     <id>com.duke.screenmatch</id>
     <name>ScreenMatch</name>
-    <version>2.4</version>
+    <version>2.5</version>
     <vendor email="136239173@qq.com" url="http://blog.csdn.net/fesdgasdgasdg?viewmode=contents">Author - duke</vendor>
 
     <description><![CDATA[
-      [ Author - duke ] A app screen match tools for android mobile devices.
+      A app screen match tools for android mobile devices.
       For example you can use on phone,pad,TV or other devices of android system.
     ]]></description>
 
     <change-notes><![CDATA[
+        2.5(2017-11-24):
+        <ul>
+          <li>Repair occasional bug,some dimen value cannot generate,cause by xml parse method of characters().</li>
+          <li>Update scaling algorithm.</li>
+        </ul>
+        2.4(2017-10-27):
         <ul>
           <li>Important: Change values-wXXXdp folder to values-swXXXdp, for adapt horizontal screen</li>
           <li>Update dialog UI</li>
