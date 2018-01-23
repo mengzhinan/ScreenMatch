@@ -17,7 +17,7 @@ public class Main {
     private static final double DEFAULT_DP = 360;
     private static double baseDP = DEFAULT_DP;
     //默认支持的dp值
-    private static final String[] defaultDPArr = new String[]{"384", "392", "400", "410", "411", "480", "533", "592", "600", "640", "662", "720", "768", "800", "811", "820", "960", "961", "1024", "1280", "1365"};
+    private static final String[] defaultDPArr = new String[]{"384", "392", "400", "410", "411", "432", "480", "533", "592", "600", "640", "662", "720", "768", "800", "811", "820", "960", "961", "1024", "1280", "1365"};
 
     //生成的values目录格式(代码中替换XXX字符串)
     public static String LETTER_REPLACE = "XXX";
