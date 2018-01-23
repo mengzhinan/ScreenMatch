@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.Messages;
 
 import javax.swing.*;
@@ -127,6 +128,12 @@ public class MainAction extends AnAction {
             Messages.showMessageDialog(resultMsg, "Tip", Messages.getInformationIcon());
         } catch (Exception e) {
             Messages.showMessageDialog("Failure, There may be some errors in your screenMatch.properties file.", "Error", Messages.getErrorIcon());
+            e.printStackTrace();
+        }
+        try {
+            //相当于刷新项目
+            ProjectManager.getInstance().reloadProject(project);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
