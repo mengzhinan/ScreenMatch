@@ -7,9 +7,9 @@ import com.duke.screenmatch.utils.Utils;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.vfs.VirtualFileManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,19 +24,25 @@ public class MainAction extends AnAction {
     }
 
     @Override
-    public void update(AnActionEvent e) {
-        super.update(e);
-
+    public void update(AnActionEvent event) {
+        super.update(event);
+        Project project = getProject(event);
+        if (project == null) {
+            return;
+        }
     }
 
     @Override
     public void actionPerformed(AnActionEvent event) {
-        if (event == null) {
-            return;
-        }
         Project project = getProject(event);
         if (project == null) {
             return;
+        }
+        try {
+            //保存所有的更改
+            ApplicationManager.getApplication().saveAll();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         String not_show_dialog = Settings.get(Utils.getBasePath(project), Settings.KEY_NOT_SHOW_DIALOG);
         boolean notShowDialog = false;
@@ -67,7 +73,6 @@ public class MainAction extends AnAction {
             });
             dialog.setVisible(true);
         }
-        VirtualFileManager.getInstance().syncRefresh();
     }
 
     public void process(Project project, String moduleName) {
