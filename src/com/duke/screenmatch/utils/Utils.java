@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class Utils {
-    private static String[] ignoreFoldersDefault = {".gradle", "gradle", ".idea", "build", ".git"};
+    private static String[] ignoreFoldersDefault = {".gradle", "gradle", ".idea", "build", ".git", ".svn"};
 
     //PropertiesComponent.getInstance().setValue() //保存基本类型及String等
     //PropertiesComponent.getInstance().setValues() //可保存数字

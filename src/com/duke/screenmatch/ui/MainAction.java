@@ -15,6 +15,14 @@ import javax.swing.*;
 import java.awt.*;
 
 public class MainAction extends AnAction {
+
+    private Project getProject(AnActionEvent event) {
+        if (event == null) {
+            return null;
+        }
+        return event.getData(PlatformDataKeys.PROJECT);
+    }
+
     @Override
     public void update(AnActionEvent e) {
         super.update(e);
@@ -26,7 +34,7 @@ public class MainAction extends AnAction {
         if (event == null) {
             return;
         }
-        Project project = event.getData(PlatformDataKeys.PROJECT);
+        Project project = getProject(event);
         if (project == null) {
             return;
         }
