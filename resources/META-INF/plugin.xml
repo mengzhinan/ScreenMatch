@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.duke.screenmatch</id>
     <name>ScreenMatch</name>
-    <version>2.5</version>
+    <version>3.0</version>
     <vendor email="136239173@qq.com" url="http://blog.csdn.net/fesdgasdgasdg?viewmode=contents">Author - duke</vendor>
 
     <description><![CDATA[
@@ -10,6 +10,11 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        3.0(2018-01-23):
+        <ul>
+          <li>Repair the bug that cannot identify the updated dimen data items.</li>
+          <li>Ignore folder of .svn.</li>
+        </ul>
         2.5(2017-11-24):
         <ul>
           <li>Repair occasional bug,some dimen value cannot generate,cause by xml parse method of characters().</li>
