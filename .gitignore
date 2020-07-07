@@ -1,0 +1,6 @@
+# Default ignored files
+/build
+local.properties
+.gradle
+.idea
+.DS_STORE

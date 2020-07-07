@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.intellij' version '0.4.15'
+}
+
+group 'com.duke.screenmatch'
+version '3.1'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+// See https://github.com/JetBrains/gradle-intellij-plugin/
+intellij {
+    version '2019.3.3'
+    plugins 'android'
+    updateSinceUntilBuild false
+}
+
+runIde {
+    // Absolute path to installed target Android Studio to use as IDE Development Instance
+    // The "Contents" directory is macOS specific.
+    ideDirectory '/Applications/Android Studio.app/Contents'
+    jbrVersion '8u242b1644.3'
+}

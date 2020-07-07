@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  ~ Copyright (C) 2020 Comment.
+  ~ All Rights Reserved.
+  ~ Comment Confidential Restricted.
+  -->
+
+<resources>
+
+    <!-- comment 1 -->
+    <dimen name="size_1">10dp</dimen>
+    <!-- comment 2 -->
+    <dimen name="size_2">36dp</dimen>
+    <!-- comment 3 -->
+    <dimen name="size_3">46dp</dimen>
+    <!-- comment 4 -->
+    <dimen name="size_4">@dimen/size_3</dimen>
+    <!-- comment 5 -->
+    <dimen name="size_5">20dp</dimen>
+
+    <!-- comment 6 -->
+    <eat-comment/>
+    <!-- comment 7 -->
+
+
+    <dimen name="size_6">420dp</dimen>
+    <dimen name="size_7">23dp</dimen>
+
+    <string name="string_1">hello</string>
+
+
+    <!-- comment 8 -->
+    <item name="size_8" type="fraction">67%</item>
+
+    <dimen name="size_9">18dp</dimen>
+
+    <item name="size_10" type="dimen" format="dimension">4dp</item>
+    <item name="size_11" type="dimen">4dp</item>
+    <item name="size_12" type="string">hello</item>
+
+    <dimen name="size_13">?attr/size_a</dimen>
+    <dimen name="size_14">?android:attr/size_b</dimen>
+    <dimen name="size_15">*?android:attr/size_c</dimen>
+
+    <!-- comment 9 -->
+
+</resources>
