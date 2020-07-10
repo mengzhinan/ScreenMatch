@@ -1,7 +1,7 @@
 package com.duke.screenmatch.dp;
 
 import com.duke.screenmatch.settings.SettingsParams;
-import javafx.util.Pair;
+import com.duke.screenmatch.utils.Pair;
 import org.xml.sax.helpers.AttributesImpl;
 
 import javax.annotation.Nonnull;
@@ -30,9 +30,9 @@ public class OtherTagItem extends TagItem {
 
         for (Pair<String, String> attrPair : attributeList) {
             attributes.addAttribute("", "",
-                    attrPair.getKey(),
+                    attrPair.first,
                     "",
-                    attrPair.getValue());
+                    attrPair.second);
         }
     }
 

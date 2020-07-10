@@ -1,6 +1,6 @@
 package com.duke.screenmatch.dp;
 
-import javafx.util.Pair;
+import com.duke.screenmatch.utils.Pair;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.LexicalHandler;
