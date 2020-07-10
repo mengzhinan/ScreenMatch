@@ -33,6 +33,13 @@ public class Settings {
     public static String KEY_ADD_DEFAULT_MATCH_DP_ARRAYS = "add_default_match_dp_array";
     public static String KEY_AUTO_RELOAD_PROJECT_AFTER_WORK_FINISHED = "auto_reload_project_after_work_finished";
 
+    // key to save the plugin version
+    private static final String KEY_PLUGIN_VERSION = "screen_match_version";
+
+    private static final int PLUGIN_VERSION_31 = 31;
+    private static final int PLUGIN_VERSION_32 = 32;
+    private static final int CURRENT_PLUGIN_VERSION = PLUGIN_VERSION_32;
+
     private static Map<String, String> sSettingMap;
 
     public static void invalidateSettingCache(String basePath) {
@@ -54,6 +61,9 @@ public class Settings {
         if (Utils.isEmpty(basePath)) {
             return null;
         }
+
+        migrationIfNeed(basePath);
+
         String project_file_path = basePath + File.separator + PROPERTIES_FILE_NAME;
         VirtualFile virtualFile = Utils.getVirtualFile(project_file_path);
         if (virtualFile == null || !virtualFile.isValid()) {
@@ -197,12 +207,33 @@ public class Settings {
         }
     }
 
+    public static void migrationIfNeed(String basePath) {
+        // check if needs do a version update migration
+        PropertiesComponent properties = PropertiesComponent.getInstance();
+        int version = properties.getInt(KEY_PLUGIN_VERSION, PLUGIN_VERSION_31);
+        if (version != PLUGIN_VERSION_32) {
+            String project_file_path = basePath + File.separator + PROPERTIES_FILE_NAME;
+            VirtualFile virtualFile = Utils.getVirtualFile(project_file_path);
+            if (virtualFile != null && virtualFile.isValid()) {
+                try {
+                    // rename old format settings file to keep user's configuration
+                    virtualFile.rename(null, PROPERTIES_FILE_NAME + ".old");
+                    // write new format settings file
+                    writeSettings(basePath);
+                    properties.setValue(KEY_PLUGIN_VERSION, CURRENT_PLUGIN_VERSION, PLUGIN_VERSION_31);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     public static boolean writeSettings(String basePath) {
-        return write(basePath, PROPERTIES_FILE_NAME);
+        return write(basePath, File.separator + PROPERTIES_FILE_NAME);
     }
 
     public static boolean writeDefaultDimens(String basePath) {
-        return write(basePath, DIMENS_FILE_NAME);
+        return write(basePath, File.separator + DIMENS_FILE_NAME);
     }
 
     public static boolean write(String basePath, String fileName) {
