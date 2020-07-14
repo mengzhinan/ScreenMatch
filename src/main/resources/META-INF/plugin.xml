@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.duke.screenmatch</id>
     <name>ScreenMatch</name>
-    <version>3.3</version>
+    <version>3.4</version>
     <vendor email="136239173@qq.com" url="http://blog.csdn.net/fesdgasdgasdg?viewmode=contents">Author - duke</vendor>
 
     <description><![CDATA[
@@ -10,6 +10,11 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        3.4(2020-07-14):
+        <ul>
+          <li>Supports simultaneous matching multiple files.</li>
+          <li>Restrict only can install in Android Studio product.</li>
+        </ul>
         3.3(2020-07-10):
         <ul>
           <li>Fix cannot generate screen match properties error.</li>
@@ -62,9 +67,9 @@
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
-    <!-- uncomment to enable plugin in all products
-    <depends>com.intellij.modules.lang</depends>
-    -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>org.jetbrains.android</depends>
+    <category>android</category>
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->

@@ -1,6 +1,8 @@
 package com.duke.screenmatch.dp;
 
 import com.duke.screenmatch.settings.SettingsParams;
+import com.duke.screenmatch.utils.Pair;
+import com.google.common.base.Stopwatch;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -15,8 +17,6 @@ import java.util.HashSet;
  */
 public class Main {
 
-    //基准dp，比喻：360dp
-    private static final double DEFAULT_DP = 360;
     //默认支持的dp值
     private static final double[] DEFAULT_DPI_ARR = new double[]{
             384, 392,
@@ -90,62 +90,77 @@ public class Main {
      * @param params 设置参数
      * @return 返回消息
      */
-    public static String start(SettingsParams params) {
-        double baseDPI;
-        if (params.getBaseDpi() > 0) {
-            baseDPI = params.getBaseDpi();
-        } else {
-            baseDPI = DEFAULT_DP;
-        }
-
-        final HashSet<Double> dataSet = new HashSet<>();
+    public static Pair<Boolean, String> start(SettingsParams params) {
+        final HashSet<Double> dpiSet = new HashSet<>();
 
         if (params.isAddDefaultMatchDPIs()) {
             //添加默认的数据
             for (double aDefaultDPArr : DEFAULT_DPI_ARR) {
-                dataSet.add(aDefaultDPArr);
+                dpiSet.add(aDefaultDPArr);
             }
         }
         if (params.getPreferMatchDPIs() != null) {
             for (double needMatch : params.getPreferMatchDPIs()) {
                 if (needMatch > 0) {
-                    dataSet.add(needMatch);
+                    dpiSet.add(needMatch);
                 }
             }
         }
         if (params.getIgnoreMatchDPIs() != null) {
             for (double ignoreMatch : params.getIgnoreMatchDPIs()) {
-                dataSet.remove(ignoreMatch);
+                dpiSet.remove(ignoreMatch);
             }
         }
 
-        System.out.println("基准宽度dp值：[ " + Tools.cutLastZero(baseDPI) + " dp ]");
-        System.out.println("本次待适配的宽度dp值: [ " + Tools.getOrderedString(dataSet) + " ]");
+        System.out.println("基准宽度dp值：[ " + Tools.cutLastZero(params.getBaseDpi()) + " dp ]");
+        System.out.println("本次待适配的宽度dp值: [ " + Tools.getOrderedString(dpiSet) + " ]");
+        System.out.println("本次待适配的文件: " + Arrays.toString(params.getProcessFileArray()));
+
+        String result = "Nothing to adapt";
+        Stopwatch monitor = Stopwatch.createStarted();
+        for (String file : params.getProcessFileArray()) {
+            result = matchSingleFile(params, dpiSet, file);
+            if (result != null) {
+                break;
+            }
+        }
+        monitor.stop();
+        System.out.println("Process screen match time cost : " + monitor.toString());
+        return result == null
+                ? Pair.create(true, "Over, adapt successful")
+                : Pair.create(false, result);
+    }
+
+    /**
+     * 无返回值表示没有出错
+     */
+    private static String matchSingleFile(SettingsParams params, HashSet<Double> dpiSet, String file) {
         //获取基准的dimens.xml文件
-        String baseDimenFilePath = params.getResFolderPath() + File.separator + "values" + File.separator + "dimens.xml";
+        String baseDimenFilePath = params.getResFolderPath() + File.separator + "values" + File.separator + file;
         File testBaseDimenFile = new File(baseDimenFilePath);
         //判断基准文件是否存在
         if (!testBaseDimenFile.exists()) {
             System.out.println("DK WARNING:  \"./res/values/dimens.xml\" 路径下的文件找不到!");
-            return "对应Module \"./res/values/dimens.xml\" 路径下的文件找不到!";
+            return "对应Module \"./res/values/" + file + "\" 路径下的文件找不到!";
         }
         //解析源dimens.xml文件
         ArrayList<XMLItem> list = XmlIO.readDimenFile(baseDimenFilePath);
-        if (list == null || list.size() <= 0) {
-            System.out.println("DK WARNING:  \"./res/values/dimens.xml\" 文件无数据!");
-            return "\"./res/values/dimens.xml\" 文件无数据!";
+        if (list == null || list.size() <= 0 || list.stream()
+                .noneMatch(xmlItem -> xmlItem instanceof DimenItem)) {
+            System.out.println("DK WARNING:  \"./res/values/" + file + "\" 文件无数据!");
+            return "\"./res/values/" + file + "\" 文件未找到标签<dimen> or <item>!";
         } else {
-            System.out.println("OK \"./res/values/dimens.xml\" 基准dimens文件解析成功!");
+            System.out.println("OK \"./res/values/" + file + "\" 基准dimens文件解析成功!");
         }
         try {
-            if (dataSet.isEmpty()) {
+            if (dpiSet.isEmpty()) {
                 System.out.println("DK WARNING:  \"未找到匹配的match_dp配置, 请检查配置文件设置\"");
                 return "未找到匹配的match_dp配置, 请检查配置文件设置";
             }
             //循环指定的dp参数，生成对应的dimens-swXXXdp.xml文件
-            for (double dpi : dataSet) {
+            for (double dpi : dpiSet) {
                 //获取当前dp除以baseDP后的倍数
-                double multiple = dpi / baseDPI;
+                double multiple = dpi / params.getBaseDpi();
 
                 //待输出的目录
                 String outFolderPath;
@@ -170,7 +185,8 @@ public class Main {
                      * 删除以前适配方式的目录values-wXXXdp
                      */
                     File oldFile = new File(delFolderPath);
-                    if (oldFile.exists() && oldFile.isDirectory() && Tools.isOldFolder(oldFile.getName(), params.isCreateSmallestWithFolder())) {
+                    if (oldFile.exists() && oldFile.isDirectory()
+                            && Tools.isOldFolder(oldFile.getName(), params.isCreateSmallestWithFolder())) {
                         //找出res目录下符合要求的values目录，然后递归删除values目录
                         Tools.deleteFile(oldFile);
                     }
@@ -185,13 +201,13 @@ public class Main {
 
 
                 //生成的dimens文件的路径
-                String outPutFile = outFolderPath + "dimens.xml";
+                String outPutFile = outFolderPath + file;
                 //生成目标文件dimens.xml输出目录
                 XmlIO.createDestinationDimens(params, new ArrayList<>(list), multiple, outPutFile);
             }
             System.out.println("OK ALL OVER，全部生成完毕！");
             //适配完成
-            return "Over, adapt successful";
+            return null;
         } catch (Exception e) {
             return "ERROR: " + e.getMessage();
         }

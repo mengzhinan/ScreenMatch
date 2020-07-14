@@ -4,6 +4,7 @@ import com.duke.screenmatch.dp.Main;
 import com.duke.screenmatch.listener.OnOkClickListener;
 import com.duke.screenmatch.settings.Settings;
 import com.duke.screenmatch.settings.SettingsParams;
+import com.duke.screenmatch.utils.Pair;
 import com.duke.screenmatch.utils.Utils;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -17,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
+import java.util.List;
 
 public class MainAction extends AnAction {
 
@@ -60,7 +62,7 @@ public class MainAction extends AnAction {
         }
         if (notShowDialog) {
             String match_module = Settings.get(Settings.KEY_MATCH_MODULE);
-            process(project, match_module);
+            process(project, match_module, null);
         } else {
             SelectModuleDialog dialog = new SelectModuleDialog();
             dialog.setTitle("Select Module");
@@ -73,16 +75,16 @@ public class MainAction extends AnAction {
             dialog.setResizable(false);
             dialog.setOnOkClickListener(new OnOkClickListener() {
                 @Override
-                public void onOkClick(String selectString) {
+                public void onOkClick(String selectString, List<String> preferDimens) {
                     Settings.setDefaultModuleName(selectString);
-                    process(project, selectString);
+                    process(project, selectString, preferDimens);
                 }
             });
             dialog.setVisible(true);
         }
     }
 
-    public void process(Project project, String moduleName) {
+    public void process(Project project, String moduleName, List<String> preferDimens) {
         if (project == null) {
             return;
         }
@@ -129,6 +131,7 @@ public class MainAction extends AnAction {
             e.printStackTrace();
         }
 
+        boolean success = false;
         try {
             SettingsParams.Builder builder = new SettingsParams.Builder()
                     .setFontMatch(matchFont)
@@ -152,13 +155,17 @@ public class MainAction extends AnAction {
                         .toArray();
                 builder.setIgnoreMatchDPIs(ignoreMatchDPIs);
             }
-            String resultMsg = Main.start(builder.build());
-            Messages.showMessageDialog(resultMsg, "Tip", Messages.getInformationIcon());
+            if (preferDimens != null && !preferDimens.isEmpty()) {
+                builder.setProcessFileArray(preferDimens.toArray(new String[0]));
+            }
+            Pair<Boolean, String> resultMsg = Main.start(builder.build());
+            success = resultMsg.first;
+            Messages.showMessageDialog(resultMsg.second, "Tip", Messages.getInformationIcon());
         } catch (Exception e) {
             Messages.showMessageDialog("Failure, There may be some errors in your screenMatch.properties file.", "Error", Messages.getErrorIcon());
             e.printStackTrace();
         }
-        if (Boolean.parseBoolean(Settings.get(Settings.KEY_AUTO_RELOAD_PROJECT_AFTER_WORK_FINISHED))) {
+        if (success && Boolean.parseBoolean(Settings.get(Settings.KEY_AUTO_RELOAD_PROJECT_AFTER_WORK_FINISHED))) {
             try {
                 //相当于刷新项目
                 ProjectManager.getInstance().reloadProject(project);

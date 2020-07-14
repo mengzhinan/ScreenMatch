@@ -47,6 +47,11 @@ public class SettingsParams {
      */
     private final double multipleForDpi;
 
+    /**
+     * 待处理的dimen文件名列表,支持多个dimens文件同时适配
+     */
+    private final String[] processFileArray;
+
     private SettingsParams(boolean isFontMatch,
                            double baseDpi,
                            double[] preferMatchDPIs,
@@ -55,7 +60,8 @@ public class SettingsParams {
                            boolean createSmallestWithFolder,
                            boolean keepSourceCodeComments,
                            boolean addDefaultMatchDPIs,
-                           double multipleForDpi) {
+                           double multipleForDpi,
+                           String[] processFileArray) {
         this.isFontMatch = isFontMatch;
         this.baseDpi = baseDpi;
         this.preferMatchDPIs = preferMatchDPIs;
@@ -65,9 +71,13 @@ public class SettingsParams {
         this.keepSourceCodeComments = keepSourceCodeComments;
         this.addDefaultMatchDPIs = addDefaultMatchDPIs;
         this.multipleForDpi = multipleForDpi;
+        this.processFileArray = processFileArray;
     }
 
     public static class Builder {
+
+        //基准dp, 360dp
+        private static final double DEFAULT_DP = 360;
 
         private boolean isFontMatch = true;
         private double baseDpi = 360;
@@ -78,6 +88,7 @@ public class SettingsParams {
         private boolean keepSourceCodeComments = true;
         private boolean addDefaultMatchDPIs = false;
         private double multipleForDpi = 1.0;
+        private String[] processFileArray = {"dimens.xml"};
 
         /**
          * 字体是否也适配(是否与dp尺寸一样等比缩放)
@@ -91,7 +102,7 @@ public class SettingsParams {
          * 基准dpi值
          */
         public Builder setBaseDpi(double baseDpi) {
-            this.baseDpi = baseDpi;
+            this.baseDpi = baseDpi > 0 ? baseDpi : DEFAULT_DP;
             return this;
         }
 
@@ -151,6 +162,18 @@ public class SettingsParams {
             return this;
         }
 
+        /**
+         * 待处理的dimen文件名列表,支持多个dimens文件同时适配
+         */
+        public Builder setProcessFileArray(String[] processFileArray) {
+            if (processFileArray == null || processFileArray.length == 0) {
+                System.out.println("setProcessFileArray is empty");
+                return this;
+            }
+            this.processFileArray = processFileArray;
+            return this;
+        }
+
         public SettingsParams build() {
             return new SettingsParams(
                     isFontMatch,
@@ -161,7 +184,8 @@ public class SettingsParams {
                     createSmallestWithFolder,
                     keepSourceCodeComments,
                     addDefaultMatchDPIs,
-                    multipleForDpi);
+                    multipleForDpi,
+                    processFileArray);
         }
     }
 
@@ -175,7 +199,8 @@ public class SettingsParams {
                 .setCreateSmallestWithFolder(this.createSmallestWithFolder)
                 .setKeepSourceCodeComments(this.keepSourceCodeComments)
                 .setAddDefaultMatchDPIs(this.addDefaultMatchDPIs)
-                .setMultipleForDpi(this.multipleForDpi);
+                .setMultipleForDpi(this.multipleForDpi)
+                .setProcessFileArray(this.processFileArray);
     }
 
     public boolean isFontMatch() {
@@ -212,5 +237,9 @@ public class SettingsParams {
 
     public double getMultipleForDpi() {
         return multipleForDpi;
+    }
+
+    public String[] getProcessFileArray() {
+        return processFileArray;
     }
 }

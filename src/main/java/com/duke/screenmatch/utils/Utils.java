@@ -74,55 +74,6 @@ public class Utils {
         return false;
     }
 
-    public static ArrayList<String> getModuleNames(String basePath) {
-        if (isEmpty(basePath)) {
-            return null;
-        }
-        ArrayList<String> names = new ArrayList<>();
-        VirtualFile baseVirtualFile = getVirtualFile(basePath);
-        if (baseVirtualFile == null) {
-            return null;
-        }
-        VirtualFile[] virtualFiles = baseVirtualFile.getChildren();
-        if (virtualFiles == null || virtualFiles.length <= 0) {
-            return null;
-        }
-        VirtualFile temp = null;
-        String markUsuallyUsed = null;
-        String defaultUsed = Settings.getDefaultModuleName();
-        for (int i = 0; i < virtualFiles.length; i++) {
-            temp = virtualFiles[i];
-            if (temp == null
-                    || !temp.isValid()
-                    || !temp.isDirectory()) {
-                continue;
-            }
-            if (isIgnore(basePath, temp.getName())) {
-                continue;
-            }
-            if (!Utils.isEmpty(defaultUsed) && defaultUsed.equals(temp.getName())) {
-                markUsuallyUsed = temp.getName();
-                continue;
-            }
-            names.add(temp.getName());
-        }
-        String[] nameArr = new String[names.size()];
-        for (int i = 0; i < nameArr.length; i++) {
-            nameArr[i] = names.get(i);
-        }
-        try {
-            Arrays.sort(nameArr);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        names.clear();
-        if (!Utils.isEmpty(markUsuallyUsed)) {
-            names.add(markUsuallyUsed);
-        }
-        Collections.addAll(names, nameArr);
-        return names;
-    }
-
     private static boolean isIgnore(String basePath, String targetValue) {
         if (isEmpty(targetValue)) {
             return true;
