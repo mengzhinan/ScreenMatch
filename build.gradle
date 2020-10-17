@@ -1,10 +1,10 @@
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij' version '0.4.15'
+    id 'org.jetbrains.intellij' version '0.5.0'
 }
 
 group 'com.duke.screenmatch'
-version '3.4'
+version '3.4.1'
 
 repositories {
     mavenCentral()
@@ -16,7 +16,7 @@ dependencies {
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
-    version '2019.3.3'
+    version '201.8743.12'
     plugins 'android'
     updateSinceUntilBuild false
 }
