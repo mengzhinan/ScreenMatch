@@ -200,10 +200,10 @@ public class Utils {
             return null;
         }
         String returnPath = "";
-        String targetPath = basePath + File.separator + moduleName + File.separator + "res" + File.separator;
+        String targetPath = ensurePathEndSeparator(basePath) + moduleName + File.separator + "res" + File.separator;
         VirtualFile virtualFile = getVirtualFile(targetPath);
         if (virtualFile == null || !virtualFile.isValid() || !virtualFile.isDirectory()) {
-            targetPath = basePath + File.separator + moduleName + File.separator + "src" + File.separator + "main" + File.separator + "res" + File.separator;
+            targetPath = ensurePathEndSeparator(basePath) + moduleName + File.separator + "src" + File.separator + "main" + File.separator + "res" + File.separator;
             virtualFile = getVirtualFile(targetPath);
             if (virtualFile == null || !virtualFile.isValid() || !virtualFile.isDirectory()) {
                 //returnPath = "";
@@ -264,5 +264,13 @@ public class Utils {
             return null;
         }
         return xmlAttribute.getValue();
+    }
+
+    public static String ensurePathEndSeparator(String path) {
+        if (path.endsWith(File.separator)) {
+            return path;
+        } else {
+            return path + File.separator;
+        }
     }
 }

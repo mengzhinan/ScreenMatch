@@ -64,7 +64,7 @@ public class Settings {
 
         migrationIfNeed(basePath);
 
-        String project_file_path = basePath + File.separator + PROPERTIES_FILE_NAME;
+        String project_file_path = Utils.ensurePathEndSeparator(basePath) + PROPERTIES_FILE_NAME;
         VirtualFile virtualFile = Utils.getVirtualFile(project_file_path);
         if (virtualFile == null || !virtualFile.isValid()) {
             writeSettings(basePath);
@@ -146,7 +146,7 @@ public class Settings {
         if (Utils.isEmpty(basePath)) {
             return;
         }
-        String project_file_path = basePath + File.separator + ".gitignore";
+        String project_file_path = Utils.ensurePathEndSeparator(basePath) + ".gitignore";
         VirtualFile virtualFile = Utils.getVirtualFile(project_file_path);
         if (virtualFile == null || !virtualFile.isValid()) {
             return;
@@ -212,7 +212,7 @@ public class Settings {
         PropertiesComponent properties = PropertiesComponent.getInstance();
         int version = properties.getInt(KEY_PLUGIN_VERSION, PLUGIN_VERSION_31);
         if (version != PLUGIN_VERSION_32) {
-            String project_file_path = basePath + File.separator + PROPERTIES_FILE_NAME;
+            String project_file_path = Utils.ensurePathEndSeparator(basePath) + PROPERTIES_FILE_NAME;
             VirtualFile virtualFile = Utils.getVirtualFile(project_file_path);
             if (virtualFile != null && virtualFile.isValid()) {
                 try {
@@ -241,7 +241,7 @@ public class Settings {
             return false;
         }
 
-        String project_file_path = basePath + File.separator + fileName;
+        String project_file_path = Utils.ensurePathEndSeparator(basePath) + fileName;
         File file = new File(project_file_path);
         if (!file.exists()) {
             try {

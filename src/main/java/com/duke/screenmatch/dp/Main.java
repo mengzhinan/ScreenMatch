@@ -2,6 +2,7 @@ package com.duke.screenmatch.dp;
 
 import com.duke.screenmatch.settings.SettingsParams;
 import com.duke.screenmatch.utils.Pair;
+import com.duke.screenmatch.utils.Utils;
 import com.google.common.base.Stopwatch;
 
 import java.io.File;
@@ -136,7 +137,7 @@ public class Main {
      */
     private static String matchSingleFile(SettingsParams params, HashSet<Double> dpiSet, String file) {
         //获取基准的dimens.xml文件
-        String baseDimenFilePath = params.getResFolderPath() + File.separator + "values" + File.separator + file;
+        String baseDimenFilePath = Utils.ensurePathEndSeparator(params.getResFolderPath()) + "values" + File.separator + file;
         File testBaseDimenFile = new File(baseDimenFilePath);
         //判断基准文件是否存在
         if (!testBaseDimenFile.exists()) {
@@ -176,8 +177,10 @@ public class Main {
                     outFolderPath = VALUES_OLD_FOLDER.replace(LETTER_REPLACE, folderDP);
                     delFolderPath = VALUES_NEW_FOLDER.replace(LETTER_REPLACE, folderDP);
                 }
-                outFolderPath = params.getResFolderPath() + File.separator + outFolderPath + File.separator;
-                delFolderPath = params.getResFolderPath() + File.separator + delFolderPath + File.separator;
+                outFolderPath = Utils.ensurePathEndSeparator(params.getResFolderPath())
+                        + Utils.ensurePathEndSeparator(outFolderPath);
+                delFolderPath = Utils.ensurePathEndSeparator(params.getResFolderPath())
+                        + Utils.ensurePathEndSeparator(delFolderPath);
 
 
                 if (IS_DELETE_LEGACY_FOLDER) {
