@@ -72,7 +72,7 @@
           <component id="68e0c" class="javax.swing.JList" binding="list_dimen_target">
             <constraints/>
             <properties>
-              <fixedCellWidth value="80"/>
+              <fixedCellWidth value="100"/>
             </properties>
           </component>
         </children>
