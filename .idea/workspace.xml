@@ -22,7 +22,6 @@
     <list default="true" id="b15729da-edfb-474e-a750-6051dcc71e6d" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ScreenMatch.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/META-INF/plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/resources/META-INF/plugin.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,6 +85,10 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="496" y="107" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1595255472905" />
+    <state x="483" y="41" key="RollbackChangesDialog" timestamp="1603033571919">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="483" y="41" key="RollbackChangesDialog/0.0.1536.824@0.0.1536.824" timestamp="1603033571919" />
     <state x="121" y="0" key="SettingsEditor" timestamp="1603024187453">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
