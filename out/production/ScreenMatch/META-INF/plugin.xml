@@ -52,7 +52,6 @@
     <idea-version since-build="107.121"/>
     <depends>com.intellij.modules.java</depends>
     <depends>com.intellij.modules.platform</depends>
-    <depends>com.intellij.modules.androidstudio</depends>
 
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
