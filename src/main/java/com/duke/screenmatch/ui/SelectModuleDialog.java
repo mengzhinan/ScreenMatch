@@ -85,7 +85,7 @@ public class SelectModuleDialog extends JDialog {
         Module module = list_modules.getSelectedValue();
         DefaultListModel<String> model = (DefaultListModel<String>) list_dimen_target.getModel();
         String basePath = Utils.getBasePath(mProject);
-        String resBasePath = Utils.getResPath(basePath, module.getName());
+        String resBasePath = Utils.getResPath(basePath, parseValidModuleName(module));
 
 
         list_dimen_target.clearSelection();
@@ -119,7 +119,7 @@ public class SelectModuleDialog extends JDialog {
         // 处理点击事件
         if (this.onOkClickListener != null) {
             try {
-                String moduleName = String.valueOf(getJList().getSelectedValue()).trim();
+                String moduleName = parseValidModuleName(getJList().getSelectedValue()).trim();
                 List<String> selectedValuesList = list_dimen_target.getSelectedValuesList();
                 onOkClickListener.onOkClick(moduleName, selectedValuesList);
             } catch (Exception e) {
@@ -132,6 +132,14 @@ public class SelectModuleDialog extends JDialog {
     private void onCancel() {
         // add your code here if necessary
         dispose();
+    }
+
+    private static String parseValidModuleName(Module module) {
+        String moduleName = module.getName();
+        String projectName = module.getProject().getName().replace(" ", "_");
+        return moduleName.startsWith(projectName + ".")
+                        ? (moduleName.replace(projectName + ".", ""))
+                        : moduleName;
     }
 
     public static void main(String[] args) {
