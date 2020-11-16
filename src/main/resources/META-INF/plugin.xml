@@ -10,6 +10,11 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        3.4.2(2020-11-16):
+        <ul>
+          <li>Filter project name in the module name.</li>
+          <li>Fix cannot find any dimens file when the module name same as the project name.</li>
+        </ul>
         3.4.1(2020-10-17):
         <ul>
           <li>Added compatibility for Android Studio 4.1.</li>

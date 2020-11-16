@@ -5,6 +5,7 @@ import com.intellij.openapi.module.Module;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Objects;
 
 public class ModuleItemRender extends DefaultListCellRenderer {
 
@@ -18,7 +19,13 @@ public class ModuleItemRender extends DefaultListCellRenderer {
 
         Module module = (Module) value;
         setIcon(GradleUtil.getModuleIcon(module));
-        setText(module.getName());
+        String projectName = module.getProject().getName();
+        String moduleName = module.getName();
+        boolean mainModule = Objects.equals(moduleName, projectName);
+        if (!mainModule) {
+            moduleName = moduleName.replace(projectName + ".", "");
+        }
+        setText(moduleName);
         return this;
     }
 }

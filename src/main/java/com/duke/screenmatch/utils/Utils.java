@@ -196,7 +196,7 @@ public class Utils {
      * module/src/main/res/values <br/>
      */
     public static String getResPath(String basePath, String moduleName) {
-        if (isEmpty(basePath) || isEmpty(moduleName)) {
+        if (isEmpty(basePath)) {
             return null;
         }
         String returnPath = "";

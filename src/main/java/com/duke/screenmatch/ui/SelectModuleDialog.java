@@ -15,6 +15,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 public class SelectModuleDialog extends JDialog {
     private JPanel contentPane;
@@ -85,7 +86,12 @@ public class SelectModuleDialog extends JDialog {
         Module module = list_modules.getSelectedValue();
         DefaultListModel<String> model = (DefaultListModel<String>) list_dimen_target.getModel();
         String basePath = Utils.getBasePath(mProject);
-        String resBasePath = Utils.getResPath(basePath, parseValidModuleName(module));
+        String moduleName = parseValidModuleName(module);
+        // fix when module is the root dir, to ensure can valid pass the res path
+        if (Objects.equals(moduleName, module.getProject().getName())) {
+            moduleName = "";
+        }
+        String resBasePath = Utils.getResPath(basePath, moduleName);
 
 
         list_dimen_target.clearSelection();
