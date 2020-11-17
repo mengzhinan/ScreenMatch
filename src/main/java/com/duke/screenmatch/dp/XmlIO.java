@@ -1,6 +1,8 @@
 package com.duke.screenmatch.dp;
 
 import com.duke.screenmatch.settings.SettingsParams;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.AttributesImpl;
@@ -49,6 +51,28 @@ public class XmlIO {
     }
 
     /**
+     * 解析dimens文件
+     *
+     * @param baseDimenFilePath 源dimens文件路径
+     */
+    public static ArrayList<XMLItem> readDimenFile(VirtualFile baseDimenFilePath) {
+        ArrayList<XMLItem> list = null;
+        try {
+            SAXReadHandler saxReadHandler = new SAXReadHandler();
+
+            XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+            xmlReader.setProperty("http://xml.org/sax/properties/lexical-handler", saxReadHandler);
+            xmlReader.setContentHandler(saxReadHandler);
+            xmlReader.parse(new InputSource(baseDimenFilePath.getInputStream()));
+
+            list = saxReadHandler.getData();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    /**
      * 生成dimens文件
      *
      * @param params 设置参数
@@ -56,19 +80,12 @@ public class XmlIO {
      * @param multiple    对应新文件需要乘以的系数
      * @param outPutFile  目标文件输出目录
      */
-    public static void createDestinationDimens(SettingsParams params,
+    public static void createDestinationDimens(Project project,
+                                               SettingsParams params,
                                                List<XMLItem> list,
                                                double multiple,
-                                               String outPutFile) {
+                                               VirtualFile outPutFile) {
         try {
-            File targetFile = new File(outPutFile);
-            if (targetFile.exists()) {
-                try {
-                    targetFile.delete();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
             params = params.newBuilder()
                     .setMultipleForDpi(multiple)
                     .build();
@@ -86,7 +103,7 @@ public class XmlIO {
             //添加xml版本，默认也是1.0
             transformer.setOutputProperty(OutputKeys.VERSION, "1.0");
             //保存xml路径
-            StreamResult result = new StreamResult(targetFile);
+            StreamResult result = new StreamResult(outPutFile.getOutputStream(project));
             handler.setResult(result);
             //创建属性Attribute对象
             AttributesImpl attributes = new AttributesImpl();
@@ -116,6 +133,7 @@ public class XmlIO {
             }
             handler.endElement("", "", SAXReadHandler.ELEMENT_RESOURCE);
             handler.endDocument();
+            result.getOutputStream().close();
             System.out.println(">>>>> " + outPutFile + " 文件生成完成!");
         } catch (Exception e) {
             System.out.println("DK WARNING: " + outPutFile + " 文件生成失败!");

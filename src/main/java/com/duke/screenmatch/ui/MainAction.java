@@ -1,7 +1,6 @@
 package com.duke.screenmatch.ui;
 
 import com.duke.screenmatch.dp.Main;
-import com.duke.screenmatch.listener.OnOkClickListener;
 import com.duke.screenmatch.settings.Settings;
 import com.duke.screenmatch.settings.SettingsParams;
 import com.duke.screenmatch.utils.Pair;
@@ -13,6 +12,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -73,18 +73,15 @@ public class MainAction extends AnAction {
             dialog.getJList().setSelectedIndex(0);
             dialog.getJList().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             dialog.setResizable(false);
-            dialog.setOnOkClickListener(new OnOkClickListener() {
-                @Override
-                public void onOkClick(String selectString, List<String> preferDimens) {
-                    Settings.setDefaultModuleName(selectString);
-                    process(project, selectString, preferDimens);
-                }
+            dialog.setOnOkClickListener((selectString, preferDimensFileList) -> {
+                Settings.setDefaultModuleName(selectString);
+                process(project, selectString, preferDimensFileList);
             });
             dialog.setVisible(true);
         }
     }
 
-    public void process(Project project, String moduleName, List<String> preferDimens) {
+    public void process(Project project, String moduleName, List<VirtualFile> preferDimensFileList) {
         if (project == null) {
             return;
         }
@@ -92,8 +89,6 @@ public class MainAction extends AnAction {
             Messages.showMessageDialog("No modules are selected.", "Warning", Messages.getWarningIcon());
             return;
         }
-        String basePath = Utils.getBasePath(project);
-        String resBasePath = Utils.getResPath(basePath, moduleName);
         String tempBaseDP = Settings.get(Settings.KEY_BASE_DP);
 
         String[] needMatchs = null;
@@ -135,7 +130,6 @@ public class MainAction extends AnAction {
         try {
             SettingsParams.Builder builder = new SettingsParams.Builder()
                     .setFontMatch(matchFont)
-                    .setResFolderPath(resBasePath)
                     .setCreateSmallestWithFolder(isUseNewFolder);
 
             if (tempBaseDP != null) {
@@ -155,10 +149,10 @@ public class MainAction extends AnAction {
                         .toArray();
                 builder.setIgnoreMatchDPIs(ignoreMatchDPIs);
             }
-            if (preferDimens != null && !preferDimens.isEmpty()) {
-                builder.setProcessFileArray(preferDimens.toArray(new String[0]));
+            if (preferDimensFileList != null && !preferDimensFileList.isEmpty()) {
+                builder.setProcessFileArray(preferDimensFileList.toArray(new VirtualFile[0]));
             }
-            Pair<Boolean, String> resultMsg = Main.start(builder.build());
+            Pair<Boolean, String> resultMsg = Main.start(project, builder.build());
             success = resultMsg.first;
             Messages.showMessageDialog(resultMsg.second, "Tip", Messages.getInformationIcon());
         } catch (Exception e) {

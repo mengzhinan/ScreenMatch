@@ -1,5 +1,7 @@
 package com.duke.screenmatch.ui;
 
+import com.android.builder.model.SourceProvider;
+import com.android.tools.idea.gradle.project.model.AndroidModuleModel;
 import com.duke.screenmatch.listener.OnOkClickListener;
 import com.duke.screenmatch.utils.Utils;
 import com.intellij.openapi.module.Module;
@@ -15,19 +17,18 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class SelectModuleDialog extends JDialog {
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
     private JList<Module> list_modules;
-    private JList<String> list_dimen_target;
+    private JCheckBox checkBox_show_all_files;
+    private JList<HeaderItem> list_dimen_target;
 
     //提供一个回调
     private OnOkClickListener onOkClickListener;
-
-    private Project mProject;
 
     //对外暴漏列表对象
     public JList<Module> getJList() {
@@ -44,13 +45,15 @@ public class SelectModuleDialog extends JDialog {
         if (dialog == null) {
             return;
         }
-        mProject = project;
         DefaultListModel<Module> listModel = new DefaultListModel<>();
         JList<Module> jList = dialog.getJList();
         Module[] modules = ModuleManager.getInstance(project).getModules();
         Arrays.sort(modules, Comparator.comparing(Module::getName));
         for (Module module : modules) {
-            listModel.addElement(module);
+            AndroidModuleModel model = AndroidModuleModel.get(module);
+            if (model != null) {
+                listModel.addElement(module);
+            }
         }
         jList.setModel(listModel);
     }
@@ -76,44 +79,61 @@ public class SelectModuleDialog extends JDialog {
         contentPane.registerKeyboardAction(e -> onCancel(),
                 KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        list_dimen_target.setModel(new DefaultListModel<>());
+        list_dimen_target.setModel(new HeaderListModel());
+        list_dimen_target.setCellRenderer(new HeaderItemRender());
 
         list_modules.setCellRenderer(new ModuleItemRender());
         list_modules.addListSelectionListener(e -> updateModuleDimenFiles());
+        checkBox_show_all_files.addActionListener(e -> updateModuleDimenFiles());
     }
 
     private void updateModuleDimenFiles() {
-        Module module = list_modules.getSelectedValue();
-        DefaultListModel<String> model = (DefaultListModel<String>) list_dimen_target.getModel();
-        String basePath = Utils.getBasePath(mProject);
-        String moduleName = parseValidModuleName(module);
-        // fix when module is the root dir, to ensure can valid pass the res path
-        if (Objects.equals(moduleName, module.getProject().getName())) {
-            moduleName = "";
-        }
-        String resBasePath = Utils.getResPath(basePath, moduleName);
-
-
         list_dimen_target.clearSelection();
+        HeaderListModel model = (HeaderListModel) list_dimen_target.getModel();
         model.removeAllElements();
 
-        // res/values
-        // src/main/res/values todo: support flavor resource dir
-        // list all files in values dir
-        VirtualFile valueDir = Utils.getVirtualFile(resBasePath + File.separator + "values");
-        if (valueDir != null && valueDir.isValid() && valueDir.isDirectory()) {
-            VirtualFile[] children = valueDir.getChildren();
-            for (VirtualFile file : children) {
-                String name = file.getName();
-                model.addElement(name);
+        boolean showAllFiles = checkBox_show_all_files.isSelected();
+
+        Module module = list_modules.getSelectedValue();
+
+        AndroidModuleModel androidModuleModel = AndroidModuleModel.get(module);
+        if (androidModuleModel != null) {
+            for (SourceProvider sourceProvider : androidModuleModel.getActiveSourceProviders()) {
+                Header header = new Header(sourceProvider.getName());
+                model.addHeader(header);
+
+                boolean hideHeader = true;
+                for (File resDirectory : sourceProvider.getResDirectories()) {
+                    // list all files in values dir
+                    File valuesDir = new File(resDirectory, "values");
+                    VirtualFile valueDir = Utils.getVirtualFile(valuesDir.getPath());
+                    if (valueDir != null && valueDir.isValid() && valueDir.isDirectory()) {
+                        VirtualFile[] children = valueDir.getChildren();
+                        for (VirtualFile file : children) {
+                            String name = file.getName();
+                            if (!showAllFiles && !name.contains("dimens")) {
+                                continue;
+                            }
+                            model.addItem(new Item(file, name));
+
+                            if (hideHeader) {
+                                hideHeader = false;
+                            }
+                        }
+                    }
+                }
+                // source provider has empty value file, hide the header
+                if (hideHeader) {
+                    model.removeHeader(header);
+                }
             }
         }
 
         // select the default dimen file
         int size = model.getSize();
         for (int i = 0; i < size; i++) {
-            String element = model.get(i);
-            if ("dimens.xml".equals(element)) {
+            HeaderItem element = model.getElementAt(i);
+            if ("dimens.xml".equals(element.getText())) {
                 list_dimen_target.setSelectedIndex(i);
                 break;
             }
@@ -126,8 +146,11 @@ public class SelectModuleDialog extends JDialog {
         if (this.onOkClickListener != null) {
             try {
                 String moduleName = parseValidModuleName(getJList().getSelectedValue()).trim();
-                List<String> selectedValuesList = list_dimen_target.getSelectedValuesList();
-                onOkClickListener.onOkClick(moduleName, selectedValuesList);
+                List<HeaderItem> selectedValuesList = list_dimen_target.getSelectedValuesList();
+                onOkClickListener.onOkClick(moduleName, selectedValuesList.stream()
+                        .filter(h -> h instanceof Item)
+                        .map(h -> ((Item) h).component1())
+                        .collect(Collectors.toList()));
             } catch (Exception e) {
                 e.printStackTrace();
             }

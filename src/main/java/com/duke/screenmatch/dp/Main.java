@@ -2,10 +2,12 @@ package com.duke.screenmatch.dp;
 
 import com.duke.screenmatch.settings.SettingsParams;
 import com.duke.screenmatch.utils.Pair;
-import com.duke.screenmatch.utils.Utils;
 import com.google.common.base.Stopwatch;
+import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 
-import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -42,46 +44,9 @@ public class Main {
      *
      * @param args 命令行参数[注意，命令行是以空格分割的]
      */
+    @Deprecated
     public static void main(String[] args) {
-        //获取当前目录的绝对路径
-        String resFolderPath = new File("./res/").getAbsolutePath();
-        String tempBaseDP = null;
-        String[] needMatchs = null;
-        String[] ignoreMatchs = null;
-        if (args != null && args.length > 0) {
-            /**
-             * 调用Main函数，默认数组第一个为基准适配dp值
-             */
-            tempBaseDP = args[0];
-            ignoreMatchs = new String[]{};
-            if (args.length > 1) {
-                needMatchs = Arrays.copyOfRange(args, 1, args.length);
-            }
-        }
-
-        SettingsParams.Builder builder = new SettingsParams.Builder()
-                .setFontMatch(true)
-                .setResFolderPath(resFolderPath)
-                .setCreateSmallestWithFolder(true);
-
-        if (tempBaseDP != null) {
-            builder.setBaseDpi(Double.parseDouble(tempBaseDP));
-        }
-
-        if (needMatchs != null) {
-            double[] needMatchDPIs = Arrays.stream(needMatchs)
-                    .mapToDouble(Double::parseDouble)
-                    .toArray();
-            builder.setPreferMatchDPIs(needMatchDPIs);
-        }
-
-        if (ignoreMatchs != null) {
-            double[] ignoreMatchDPIs = Arrays.stream(ignoreMatchs)
-                    .mapToDouble(Double::parseDouble)
-                    .toArray();
-            builder.setIgnoreMatchDPIs(ignoreMatchDPIs);
-        }
-        start(builder.build());
+        System.out.println("Commandline process was disabled.");
     }
 
 
@@ -91,7 +56,7 @@ public class Main {
      * @param params 设置参数
      * @return 返回消息
      */
-    public static Pair<Boolean, String> start(SettingsParams params) {
+    public static Pair<Boolean, String> start(Project project, SettingsParams params) {
         final HashSet<Double> dpiSet = new HashSet<>();
 
         if (params.isAddDefaultMatchDPIs()) {
@@ -119,8 +84,8 @@ public class Main {
 
         String result = "Nothing to adapt";
         Stopwatch monitor = Stopwatch.createStarted();
-        for (String file : params.getProcessFileArray()) {
-            result = matchSingleFile(params, dpiSet, file);
+        for (VirtualFile file : params.getProcessFileArray()) {
+            result = matchSingleFile(project, params, dpiSet, file);
             if (result != null) {
                 break;
             }
@@ -135,23 +100,25 @@ public class Main {
     /**
      * 无返回值表示没有出错
      */
-    private static String matchSingleFile(SettingsParams params, HashSet<Double> dpiSet, String file) {
+    private static String matchSingleFile(Project project,
+                                          SettingsParams params,
+                                          HashSet<Double> dpiSet,
+                                          VirtualFile baseDimensFile) {
         //获取基准的dimens.xml文件
-        String baseDimenFilePath = Utils.ensurePathEndSeparator(params.getResFolderPath()) + "values" + File.separator + file;
-        File testBaseDimenFile = new File(baseDimenFilePath);
         //判断基准文件是否存在
-        if (!testBaseDimenFile.exists()) {
-            System.out.println("DK WARNING:  \"./res/values/dimens.xml\" 路径下的文件找不到!");
-            return "对应Module \"./res/values/" + file + "\" 路径下的文件找不到!";
+        String fileUrl = baseDimensFile.getPresentableUrl();
+        if (!baseDimensFile.isValid()) {
+            System.out.println("DK WARNING:  \\"+ fileUrl + "\" 路径下的文件找不到!");
+            return "对应Module \"./res/values/" + baseDimensFile + "\" 路径下的文件找不到!";
         }
         //解析源dimens.xml文件
-        ArrayList<XMLItem> list = XmlIO.readDimenFile(baseDimenFilePath);
+        ArrayList<XMLItem> list = XmlIO.readDimenFile(baseDimensFile);
         if (list == null || list.size() <= 0 || list.stream()
                 .noneMatch(xmlItem -> xmlItem instanceof DimenItem)) {
-            System.out.println("DK WARNING:  \"./res/values/" + file + "\" 文件无数据!");
-            return "\"./res/values/" + file + "\" 文件未找到标签<dimen> or <item>!";
+            System.out.println("DK WARNING:  \\" + fileUrl + "\" 文件无数据!");
+            return "\\" + fileUrl + "\" 文件未找到标签<dimen> or <item>!";
         } else {
-            System.out.println("OK \"./res/values/" + file + "\" 基准dimens文件解析成功!");
+            System.out.println("OK \\" + fileUrl + "\" 基准dimens文件解析成功!");
         }
         try {
             if (dpiSet.isEmpty()) {
@@ -164,49 +131,46 @@ public class Main {
                 double multiple = dpi / params.getBaseDpi();
 
                 //待输出的目录
-                String outFolderPath;
+                String outFolderName;
                 //待删除的目录
-                String delFolderPath;
+                String delFolderName;
                 //values目录上带的dp整数值
                 String folderDP = String.valueOf((int) dpi);
 
                 if (params.isCreateSmallestWithFolder()) {
-                    outFolderPath = VALUES_NEW_FOLDER.replace(LETTER_REPLACE, folderDP);
-                    delFolderPath = VALUES_OLD_FOLDER.replace(LETTER_REPLACE, folderDP);
+                    outFolderName = VALUES_NEW_FOLDER.replace(LETTER_REPLACE, folderDP);
+                    delFolderName = VALUES_OLD_FOLDER.replace(LETTER_REPLACE, folderDP);
                 } else {
-                    outFolderPath = VALUES_OLD_FOLDER.replace(LETTER_REPLACE, folderDP);
-                    delFolderPath = VALUES_NEW_FOLDER.replace(LETTER_REPLACE, folderDP);
-                }
-                outFolderPath = Utils.ensurePathEndSeparator(params.getResFolderPath())
-                        + Utils.ensurePathEndSeparator(outFolderPath);
-                delFolderPath = Utils.ensurePathEndSeparator(params.getResFolderPath())
-                        + Utils.ensurePathEndSeparator(delFolderPath);
-
-
-                if (IS_DELETE_LEGACY_FOLDER) {
-                    /**
-                     * 删除以前适配方式的目录values-wXXXdp
-                     */
-                    File oldFile = new File(delFolderPath);
-                    if (oldFile.exists() && oldFile.isDirectory()
-                            && Tools.isOldFolder(oldFile.getName(), params.isCreateSmallestWithFolder())) {
-                        //找出res目录下符合要求的values目录，然后递归删除values目录
-                        Tools.deleteFile(oldFile);
-                    }
+                    outFolderName = VALUES_OLD_FOLDER.replace(LETTER_REPLACE, folderDP);
+                    delFolderName = VALUES_NEW_FOLDER.replace(LETTER_REPLACE, folderDP);
                 }
 
-
-                /**
+                /*
                  * 生成新的目录values-swXXXdp
                  */
                 //创建当前dp对应的dimens文件目录
-                new File(outFolderPath).mkdirs();
-
-
+                // .../res/values/dimens.xml
+                // baseDimensFile
+                // .../res/
+                VirtualFile parent = baseDimensFile.getParent().getParent();
+                // .../res/values-xwXXXdp/
+                VirtualFile targetOutFolder = WriteAction.compute(() -> createChildDirectoryIfNotExist(project, parent, outFolderName));
                 //生成的dimens文件的路径
-                String outPutFile = outFolderPath + file;
+                // .../res/values-xwXXXdp/dimens.xml
+                VirtualFile targetOutFile = WriteAction.compute(() -> createChildFileIfNotExist(project, targetOutFolder, baseDimensFile.getName()));
+
+                if (IS_DELETE_LEGACY_FOLDER) {
+                    /*
+                     * 删除以前适配方式的目录values-wXXXdp
+                     */
+                    VirtualFile delFolder = parent.findChild(delFolderName);
+                    if (delFolder != null && delFolder.isValid()) {
+                        WriteAction.run(() -> delFolder.delete(project));
+                    }
+                }
+
                 //生成目标文件dimens.xml输出目录
-                XmlIO.createDestinationDimens(params, new ArrayList<>(list), multiple, outPutFile);
+                XmlIO.createDestinationDimens(project, params, new ArrayList<>(list), multiple, targetOutFile);
             }
             System.out.println("OK ALL OVER，全部生成完毕！");
             //适配完成
@@ -214,5 +178,19 @@ public class Main {
         } catch (Exception e) {
             return "ERROR: " + e.getMessage();
         }
+    }
+
+    public static VirtualFile createChildDirectoryIfNotExist(Project project,
+                                                             VirtualFile parent,
+                                                             String name) throws IOException {
+        final VirtualFile child = parent.findChild(name);
+        return child == null ? parent.createChildDirectory(project, name) : child;
+    }
+
+    public static VirtualFile createChildFileIfNotExist(Project project,
+                                                        VirtualFile parent,
+                                                        String name) throws IOException {
+        final VirtualFile child = parent.findChild(name);
+        return child == null ? parent.createChildData(project, name) : child;
     }
 }

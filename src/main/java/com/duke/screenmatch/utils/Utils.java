@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class Utils {
-    private static String[] ignoreFoldersDefault = {".gradle", "gradle", ".idea", "build", ".git", ".svn"};
+    private static final String[] IGNORE_FOLDERS_DEFAULT = {".gradle", "gradle", ".idea", "build", ".git", ".svn"};
 
     //PropertiesComponent.getInstance().setValue() //保存基本类型及String等
     //PropertiesComponent.getInstance().setValues() //可保存数字
@@ -36,7 +36,7 @@ public class Utils {
         if (dimension == null) {
             return 400;
         }
-        return dimension.width / 4;
+        return dimension.width / 3;
     }
 
     public static int getDialogHeight() {
@@ -59,7 +59,7 @@ public class Utils {
             return point;
         }
         /**
-         * dimension.width / 4 即对话框的宽度
+         * dimension.width / 3 即对话框的宽度
          * dimension.height / 3 i对话框的高度
          */
         point.x = (dimension.width - getDialogWidth()) >> 1;
@@ -79,7 +79,7 @@ public class Utils {
             return true;
         }
         Set<String> set = new HashSet<>();
-        set.addAll(Arrays.asList(ignoreFoldersDefault));
+        set.addAll(Arrays.asList(IGNORE_FOLDERS_DEFAULT));
         String ignoreModule = Settings.get(Settings.KEY_IGNORE_MODULE_NAME);
         if (!isEmpty(ignoreModule)) {
             ignoreModule = ignoreModule.replaceAll("，", ",")

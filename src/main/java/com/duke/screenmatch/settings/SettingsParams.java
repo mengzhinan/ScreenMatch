@@ -1,5 +1,7 @@
 package com.duke.screenmatch.settings;
 
+import com.intellij.openapi.vfs.VirtualFile;
+
 public class SettingsParams {
 
     /**
@@ -21,11 +23,6 @@ public class SettingsParams {
      * 待忽略宽度dp值
      */
     private final double[] ignoreMatchDPIs;
-
-    /**
-     * base dimens.xml 文件的res目录
-     */
-    private final String resFolderPath;
 
     /**
      * 是否创建 values-swXXXdp 新格式的目录
@@ -50,23 +47,21 @@ public class SettingsParams {
     /**
      * 待处理的dimen文件名列表,支持多个dimens文件同时适配
      */
-    private final String[] processFileArray;
+    private final VirtualFile[] processFileArray;
 
     private SettingsParams(boolean isFontMatch,
                            double baseDpi,
                            double[] preferMatchDPIs,
                            double[] ignoreMatchDPIs,
-                           String resFolderPath,
                            boolean createSmallestWithFolder,
                            boolean keepSourceCodeComments,
                            boolean addDefaultMatchDPIs,
                            double multipleForDpi,
-                           String[] processFileArray) {
+                           VirtualFile[] processFileArray) {
         this.isFontMatch = isFontMatch;
         this.baseDpi = baseDpi;
         this.preferMatchDPIs = preferMatchDPIs;
         this.ignoreMatchDPIs = ignoreMatchDPIs;
-        this.resFolderPath = resFolderPath;
         this.createSmallestWithFolder = createSmallestWithFolder;
         this.keepSourceCodeComments = keepSourceCodeComments;
         this.addDefaultMatchDPIs = addDefaultMatchDPIs;
@@ -83,12 +78,11 @@ public class SettingsParams {
         private double baseDpi = 360;
         private double[] preferMatchDPIs;
         private double[] ignoreMatchDPIs;
-        private String resFolderPath;
         private boolean createSmallestWithFolder = true;
         private boolean keepSourceCodeComments = true;
         private boolean addDefaultMatchDPIs = false;
         private double multipleForDpi = 1.0;
-        private String[] processFileArray = {"dimens.xml"};
+        private VirtualFile[] processFileArray = new VirtualFile[0];
 
         /**
          * 字体是否也适配(是否与dp尺寸一样等比缩放)
@@ -119,14 +113,6 @@ public class SettingsParams {
          */
         public Builder setIgnoreMatchDPIs(double[] ignoreMatchDPIs) {
             this.ignoreMatchDPIs = ignoreMatchDPIs;
-            return this;
-        }
-
-        /**
-         * base dimens.xml 文件的res目录
-         */
-        public Builder setResFolderPath(String resFolderPath) {
-            this.resFolderPath = resFolderPath;
             return this;
         }
 
@@ -165,7 +151,7 @@ public class SettingsParams {
         /**
          * 待处理的dimen文件名列表,支持多个dimens文件同时适配
          */
-        public Builder setProcessFileArray(String[] processFileArray) {
+        public Builder setProcessFileArray(VirtualFile[] processFileArray) {
             if (processFileArray == null || processFileArray.length == 0) {
                 System.out.println("setProcessFileArray is empty");
                 return this;
@@ -180,7 +166,6 @@ public class SettingsParams {
                     baseDpi,
                     preferMatchDPIs,
                     ignoreMatchDPIs,
-                    resFolderPath,
                     createSmallestWithFolder,
                     keepSourceCodeComments,
                     addDefaultMatchDPIs,
@@ -195,7 +180,6 @@ public class SettingsParams {
                 .setBaseDpi(this.baseDpi)
                 .setPreferMatchDPIs(this.preferMatchDPIs)
                 .setIgnoreMatchDPIs(this.ignoreMatchDPIs)
-                .setResFolderPath(this.resFolderPath)
                 .setCreateSmallestWithFolder(this.createSmallestWithFolder)
                 .setKeepSourceCodeComments(this.keepSourceCodeComments)
                 .setAddDefaultMatchDPIs(this.addDefaultMatchDPIs)
@@ -219,10 +203,6 @@ public class SettingsParams {
         return ignoreMatchDPIs;
     }
 
-    public String getResFolderPath() {
-        return resFolderPath;
-    }
-
     public boolean isCreateSmallestWithFolder() {
         return createSmallestWithFolder;
     }
@@ -239,7 +219,7 @@ public class SettingsParams {
         return multipleForDpi;
     }
 
-    public String[] getProcessFileArray() {
+    public VirtualFile[] getProcessFileArray() {
         return processFileArray;
     }
 }
