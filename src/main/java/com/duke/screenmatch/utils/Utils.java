@@ -7,6 +7,7 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -272,5 +273,13 @@ public class Utils {
         } else {
             return path + File.separator;
         }
+    }
+
+    public static String parseValidModuleName(Module module) {
+        String moduleName = module.getName();
+        String projectName = module.getProject().getName().replace(" ", "_");
+        return moduleName.startsWith(projectName + ".")
+                ? (moduleName.replace(projectName + ".", ""))
+                : moduleName;
     }
 }

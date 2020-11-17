@@ -145,7 +145,7 @@ public class SelectModuleDialog extends JDialog {
         // 处理点击事件
         if (this.onOkClickListener != null) {
             try {
-                String moduleName = parseValidModuleName(getJList().getSelectedValue()).trim();
+                String moduleName = Utils.parseValidModuleName(getJList().getSelectedValue()).trim();
                 List<HeaderItem> selectedValuesList = list_dimen_target.getSelectedValuesList();
                 onOkClickListener.onOkClick(moduleName, selectedValuesList.stream()
                         .filter(h -> h instanceof Item)
@@ -161,14 +161,6 @@ public class SelectModuleDialog extends JDialog {
     private void onCancel() {
         // add your code here if necessary
         dispose();
-    }
-
-    private static String parseValidModuleName(Module module) {
-        String moduleName = module.getName();
-        String projectName = module.getProject().getName().replace(" ", "_");
-        return moduleName.startsWith(projectName + ".")
-                        ? (moduleName.replace(projectName + ".", ""))
-                        : moduleName;
     }
 
     public static void main(String[] args) {

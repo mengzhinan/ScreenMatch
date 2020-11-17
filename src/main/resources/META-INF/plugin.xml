@@ -10,6 +10,13 @@
     ]]></description>
 
     <change-notes><![CDATA[
+        4.0(2020-11-17):
+        <ul>
+          <li>Support dimens match by gradle flavor</li>
+          <li>Remove commandline match support</li>
+          <li>Update min support version to 162.74.16</li>
+          <li>Add screenshots in README.md</li>
+        </ul>
         3.4.2(2020-11-16):
         <ul>
           <li>Filter project name in the module name.</li>
