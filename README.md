@@ -1,6 +1,8 @@
 # ScreenMatch    --  (Android Studio plugin)
 Multi screen dimens match
 
+![Build Plugin](https://github.com/AndyWing/ScreenMatch/workflows/Build%20Plugin/badge.svg?branch=master)
+
 ![1]
 ![2]
 ![3]
