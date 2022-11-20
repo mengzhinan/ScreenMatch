@@ -1,5 +1,5 @@
 # ScreenMatch    --  (Android Studio plugin)
-multi screen dimens match
+Android multi screen dimens match plugin.
 
 * You can search in Android Studio supermarket and install "ScreenMatch".
 * Integration this tools of .bat and .jar on Android Studio. 
