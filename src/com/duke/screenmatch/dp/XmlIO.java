@@ -66,7 +66,9 @@ public class XmlIO {
             //创建Transformer实例
             Transformer transformer = handler.getTransformer();
             //是否自动添加额外的空白
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            // 修改为 no，解决下面链接问题
+            // https://github.com/mengzhinan/ScreenMatch/issues/15
+            transformer.setOutputProperty(OutputKeys.INDENT, "no");
             //设置字符编码
             transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
             //添加xml版本，默认也是1.0
@@ -101,6 +103,8 @@ public class XmlIO {
                 handler.characters(targetValue.toCharArray(), 0, targetValue.length());
                 handler.endElement("", "", SAXReadHandler.ELEMENT_DIMEN);
             }
+            //换行
+            handler.characters("\n".toCharArray(), 0, "\n".length());
             handler.endElement("", "", SAXReadHandler.ELEMENT_RESOURCE);
             handler.endDocument();
             System.out.println(">>>>> " + outPutFile + " 文件生成完成!");
